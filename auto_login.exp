@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+set host [lindex $argv 0]
+set port [lindex $argv 1]
+set user [lindex $argv 2]
+set password [lindex $argv 3]
+
+
+set timeout 5
+
+spawn ssh -p $port $user@$host
+
+expect {
+    "yes/no"
+    {
+        send -- "yes\n"
+        expect "*assword:" { send "${password}\n"}
+    }
+    "*assword*"
+    {
+        send "${password}\n"
+    }
+    timeout  {   send_error "User 'root' login timeout.\n";  exit 1;  }
+}
+interact
